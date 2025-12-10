@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'base_bottom_sheet.dart';
-import '../atoms/app_button.dart';
+import 'package:my_daily_log/presentation/widgets/atoms/app_button.dart';
+import 'package:my_daily_log/presentation/widgets/templates/base_bottom_sheet.dart';
 
 class FormBottomSheet extends StatelessWidget {
   final String title;

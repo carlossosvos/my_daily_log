@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../atoms/app_text.dart';
-import '../atoms/app_icon_button.dart';
+import 'package:my_daily_log/presentation/widgets/atoms/app_icon_button.dart';
+import 'package:my_daily_log/presentation/widgets/atoms/app_text.dart';
 
 class BottomSheetHeader extends StatelessWidget {
   final String title;

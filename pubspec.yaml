@@ -52,6 +52,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  
+  # Additional linting and analysis tools
+  import_sorter: ^4.6.0  # For organizing imports
+  dart_code_metrics: ^5.7.6  # For code metrics and additional rules
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

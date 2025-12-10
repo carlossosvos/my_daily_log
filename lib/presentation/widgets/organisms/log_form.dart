@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../atoms/app_text_field.dart';
+import 'package:my_daily_log/presentation/widgets/atoms/app_text_field.dart';
 
 class LogForm extends StatelessWidget {
   final TextEditingController titleController;

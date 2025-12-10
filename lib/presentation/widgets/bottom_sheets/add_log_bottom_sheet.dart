@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_daily_log/domain/entities/daily_log.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_event.dart';
-import '../templates/form_bottom_sheet.dart';
-import '../organisms/log_form.dart';
+import 'package:my_daily_log/presentation/widgets/organisms/log_form.dart';
+import 'package:my_daily_log/presentation/widgets/templates/form_bottom_sheet.dart';
 
 class AddLogBottomSheet extends StatefulWidget {
   final DailyLog? log;

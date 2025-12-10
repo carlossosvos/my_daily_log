@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../molecules/bottom_sheet_header.dart';
+import 'package:my_daily_log/presentation/widgets/molecules/bottom_sheet_header.dart';
 
 class BaseBottomSheet extends StatelessWidget {
   final String title;

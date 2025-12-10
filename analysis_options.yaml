@@ -9,20 +9,71 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/generated_plugin_registrant.dart"
+  
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # Enabled rules for better code quality
+    prefer_single_quotes: true
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_final_fields: true
+    prefer_final_in_for_each: true
+    prefer_final_locals: true
+    
+    # Import organization
+    always_use_package_imports: true
+    avoid_relative_lib_imports: true
+    directives_ordering: true
+    
+    # Documentation
+    public_member_api_docs: false # Set to true if you want to enforce documentation
+    lines_longer_than_80_chars: false # Relaxed for modern screens
+    
+    # Code style
+    require_trailing_commas: true
+    sort_child_properties_last: true
+    use_key_in_widget_constructors: true
+    sized_box_for_whitespace: true
+    sized_box_shrink_expand: true
+    
+    # Error prevention
+    avoid_print: true
+    avoid_unnecessary_containers: true
+    avoid_web_libraries_in_flutter: true
+    no_logic_in_create_state: true
+    prefer_typing_uninitialized_variables: true
+    use_build_context_synchronously: true
+    
+    # Performance
+    avoid_function_literals_in_foreach_calls: true
+    prefer_collection_literals: true
+    prefer_spread_collections: true
+    
+    # Null safety
+    avoid_init_to_null: true
+    unnecessary_null_in_if_null_operators: true
+    unnecessary_nullable_for_final_variable_declarations: true
+    
+    # Flutter specific
+    use_colored_box: true
+    use_decorated_box: true
+    use_super_parameters: true
+    
+    # Disabled rules (uncomment if needed)
+    # avoid_print: false
+    # prefer_double_quotes: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

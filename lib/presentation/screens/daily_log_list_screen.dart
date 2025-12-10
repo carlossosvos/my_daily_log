@@ -79,7 +79,7 @@ class DailyLogListScreen extends StatelessWidget {
                   return DailyLogCard(
                     log: log,
                     onTap: () {
-                      showModalBottomSheet(
+                      showModalBottomSheet<void>(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
@@ -99,7 +99,7 @@ class DailyLogListScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: FloatingActionButton(
           onPressed: () {
-            showModalBottomSheet(
+            showModalBottomSheet<void>(
               context: context,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,

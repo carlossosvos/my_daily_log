@@ -4,10 +4,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:my_daily_log/domain/entities/daily_log.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_event.dart';
+import 'package:my_daily_log/presentation/widgets/atoms/app_text.dart';
+import 'package:my_daily_log/presentation/widgets/bottom_sheets/add_log_bottom_sheet.dart';
 import 'package:my_daily_log/presentation/widgets/molecules/app_slidable_action.dart';
-import '../atoms/app_text.dart';
-import '../molecules/confirmation_dialog.dart';
-import '../bottom_sheets/add_log_bottom_sheet.dart';
+import 'package:my_daily_log/presentation/widgets/molecules/confirmation_dialog.dart';
 
 class DailyLogCard extends StatelessWidget {
   final DailyLog log;
@@ -43,13 +43,13 @@ class DailyLogCard extends StatelessWidget {
           ),
           child: Container(
             width: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 4,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
@@ -85,7 +85,7 @@ class DailyLogCard extends StatelessWidget {
   }
 
   void _handleEdit(BuildContext context) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -94,7 +94,7 @@ class DailyLogCard extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => ConfirmationDialog(
         title: 'Delete Log',
