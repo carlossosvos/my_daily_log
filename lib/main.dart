@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_daily_log/core/config/app_config.dart';
 import 'package:my_daily_log/core/router/app_router.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
 
 void main() {
+  // Debug configuration on startup
+  if (AppConfig.isDevelopment) {
+    // ignore: avoid_print
+    print('=== Development Configuration ===');
+    // ignore: avoid_print
+    print(AppConfig.debugInfo);
+  }
+
   runApp(const MyApp());
 }
 
