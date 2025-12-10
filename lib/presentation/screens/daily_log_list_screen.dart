@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_event.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_state.dart';
-import 'package:my_daily_log/presentation/widgets/add_log_bottom_sheet.dart';
-import 'package:my_daily_log/presentation/widgets/daily_log_item.dart';
+import 'package:my_daily_log/presentation/widgets/bottom_sheets/add_log_bottom_sheet.dart';
+import 'package:my_daily_log/presentation/widgets/organisms/daily_log_card.dart';
 
 class DailyLogListScreen extends StatelessWidget {
   const DailyLogListScreen({super.key});
@@ -70,22 +71,24 @@ class DailyLogListScreen extends StatelessWidget {
               );
             }
 
-            return ListView.builder(
-              itemCount: state.logs.length,
-              itemBuilder: (context, index) {
-                final log = state.logs[index];
-                return DailyLogItem(
-                  log: log,
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) => AddLogBottomSheet(log: log),
-                    );
-                  },
-                );
-              },
+            return SlidableAutoCloseBehavior(
+              child: ListView.builder(
+                itemCount: state.logs.length,
+                itemBuilder: (context, index) {
+                  final log = state.logs[index];
+                  return DailyLogCard(
+                    log: log,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => AddLogBottomSheet(log: log),
+                      );
+                    },
+                  );
+                },
+              ),
             );
           }
 
