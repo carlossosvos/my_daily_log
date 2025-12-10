@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_slidable/flutter_slidable.dart'; // Add this import
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_event.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log_state.dart';
@@ -71,7 +71,6 @@ class DailyLogListScreen extends StatelessWidget {
               );
             }
 
-            // WRAP WITH SlidableAutoCloseBehavior
             return SlidableAutoCloseBehavior(
               child: ListView.builder(
                 itemCount: state.logs.length,

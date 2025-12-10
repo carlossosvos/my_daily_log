@@ -45,10 +45,9 @@ class DailyLogCard extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
-              //borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black12,
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
