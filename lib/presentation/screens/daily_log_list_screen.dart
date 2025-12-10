@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:my_daily_log/presentation/bloc/daily_log_bloc.dart';
-import 'package:my_daily_log/presentation/bloc/daily_log_event.dart';
-import 'package:my_daily_log/presentation/bloc/daily_log_state.dart';
+import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
+import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
+import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_state.dart';
 import 'package:my_daily_log/presentation/widgets/bottom_sheets/add_log_bottom_sheet.dart';
 import 'package:my_daily_log/presentation/widgets/organisms/daily_log_card.dart';
 

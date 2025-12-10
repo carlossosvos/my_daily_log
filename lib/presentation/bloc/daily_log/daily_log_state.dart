@@ -33,4 +33,3 @@ class DailyLogError extends DailyLogState {
   @override
   List<Object?> get props => [message];
 }
-
