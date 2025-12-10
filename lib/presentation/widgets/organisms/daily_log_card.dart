@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:my_daily_log/core/utils/date_formatter.dart';
 import 'package:my_daily_log/domain/entities/daily_log.dart';
-import 'package:my_daily_log/presentation/bloc/daily_log_bloc.dart';
-import 'package:my_daily_log/presentation/bloc/daily_log_event.dart';
+import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
+import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
 import 'package:my_daily_log/presentation/widgets/atoms/app_text.dart';
 import 'package:my_daily_log/presentation/widgets/bottom_sheets/add_log_bottom_sheet.dart';
 import 'package:my_daily_log/presentation/widgets/molecules/app_slidable_action.dart';
@@ -73,7 +74,9 @@ class DailyLogCard extends StatelessWidget {
                       ),
                     ],
                     const SizedBox(height: 8),
-                    AppText.caption(_formatDate(log.createdAt)),
+                    AppText.caption(
+                      DateFormatter.formatRelativeDate(log.createdAt),
+                    ),
                   ],
                 ),
               ),
@@ -109,21 +112,5 @@ class DailyLogCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    final hour = date.hour.toString().padLeft(2, '0');
-    final minute = date.minute.toString().padLeft(2, '0');
-    final timeString = '$hour:$minute';
-
-    if (difference.inDays == 0) {
-      return 'Today at $timeString';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday at $timeString';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago at $timeString';
-    } else {
-      return '${date.day}/${date.month}/${date.year} at $timeString';
-    }
-  }
+  // Remove the _formatDate method - it's now in DateFormatter
 }

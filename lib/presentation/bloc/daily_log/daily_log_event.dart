@@ -38,4 +38,3 @@ class DeleteDailyLog extends DailyLogEvent {
   @override
   List<Object?> get props => [id];
 }
-
