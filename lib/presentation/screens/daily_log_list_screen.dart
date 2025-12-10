@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_daily_log/core/router/app_route.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_state.dart';
@@ -78,13 +80,9 @@ class DailyLogListScreen extends StatelessWidget {
                   final log = state.logs[index];
                   return DailyLogCard(
                     log: log,
+
                     onTap: () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => AddLogBottomSheet(log: log),
-                      );
+                      context.push(AppRoutes.logDetailWithId(log.id));
                     },
                   );
                 },
