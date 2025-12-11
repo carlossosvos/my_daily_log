@@ -1,5 +1,5 @@
 {
-  "ENVIRONMENT": "environment",
+  "ENVIRONMENT": "development",
   "APP_NAME": "My Daily Log",
   "ENABLE_LOGGING": "true",
 
