@@ -46,7 +46,9 @@ class AppConfig {
     'environment': environment,
     'auth0Domain': auth0Domain,
     'auth0ClientId': auth0ClientId.isNotEmpty
-        ? '***${auth0ClientId.substring(auth0ClientId.length - 4)}'
+        ? (auth0ClientId.length >= 4
+            ? '***${auth0ClientId.substring(auth0ClientId.length - 4)}'
+            : '***$auth0ClientId')
         : 'NOT_SET',
     'supabaseUrl': supabaseUrl,
     'apiBaseUrl': apiBaseUrl,
