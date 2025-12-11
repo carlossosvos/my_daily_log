@@ -42,8 +42,6 @@ class AppConfig {
   }
 
   // Debug info
-  static Map<String, dynamic> get debugInfo => {
-    'environment': environment,
   // WARNING: Do not log or expose this information in production environments.
   // Sensitive values are masked or omitted for safety.
   static Map<String, dynamic> get debugInfo => {

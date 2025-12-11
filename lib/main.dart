@@ -6,6 +6,19 @@ import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
 
 void main() {
+  // Validate configuration before starting the app
+  if (!AppConfig.isValid) {
+    throw StateError(
+      'Invalid configuration: Required environment variables are missing.\n'
+      'Please ensure the following are set:\n'
+      '  - AUTH0_DOMAIN\n'
+      '  - AUTH0_CLIENT_ID\n'
+      '  - SUPABASE_URL\n'
+      '  - SUPABASE_ANON_KEY\n'
+      'Current config:\n${AppConfig.debugInfo}',
+    );
+  }
+
   // Debug configuration on startup
   if (AppConfig.isDevelopment) {
     // ignore: avoid_print
