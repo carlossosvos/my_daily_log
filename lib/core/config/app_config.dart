@@ -62,7 +62,9 @@ class AppConfig {
             : '***')
         : 'NOT_SET',
     'supabaseAnonKey': supabaseAnonKey.isNotEmpty
-        ? '***${supabaseAnonKey.length > 4 ? supabaseAnonKey.substring(supabaseAnonKey.length - 4) : ""}'
+        ? (supabaseAnonKey.length > 4
+            ? '***${supabaseAnonKey.substring(supabaseAnonKey.length - 4)}'
+            : '***')
         : 'NOT_SET',
     'apiBaseUrl': apiBaseUrl.isNotEmpty
         ? (apiBaseUrl.length > 9
