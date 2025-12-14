@@ -17,7 +17,9 @@ class AppRoutes {
     path: '/settings',
   );
 
+  static const AppRoute logIn = AppRoute(name: 'logIn', path: '/login');
+
   static String logDetailWithId(String id) => '/log/$id';
 
-  static List<AppRoute> get allRoutes => [home, logDetail, settings];
+  static List<AppRoute> get allRoutes => [logIn, home, logDetail, settings];
 }

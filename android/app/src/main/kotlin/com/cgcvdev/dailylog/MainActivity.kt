@@ -1,4 +1,4 @@
-package com.example.my_daily_log
+package com.cgcvdev.dailylog
 
 import io.flutter.embedding.android.FlutterActivity
 
