@@ -27,15 +27,17 @@ class Auth0Service {
     }
   }
 
-  Future<User?> login() async {
+  Future<User?> login({Map<String, String>? parameters}) async {
     try {
-      final credentials = await _auth0.webAuthentication().login();
+      final credentials = await _auth0
+          .webAuthentication(scheme: 'com.cgcvdev.dailylog')
+          .login(parameters: parameters ?? const {});
       if (credentials.user.sub.isNotEmpty) {
         return _mapToUser(credentials.user);
       }
     } catch (e) {
       if (AppConfig.enableLogging) {
-        throw ('Auth0 login error: $e');
+        debugPrint('Auth0 login error: $e');
       }
       rethrow;
     }

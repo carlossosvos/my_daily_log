@@ -22,6 +22,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (isAuthenticated) {
         final user = await _authRepository.getCurrentUser();
         if (user != null) {
+          // Force logout if email not verified
+          if (!user.isEmailVerified) {
+            await _authRepository.logout();
+            emit(
+              const AuthError('Please verify your email before signing in.'),
+            );
+            return;
+          }
           emit(AuthAuthenticated(user));
         } else {
           emit(const AuthUnauthenticated());
@@ -42,6 +50,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authRepository.login();
       if (user != null) {
+        // Force logout if email not verified
+        if (!user.isEmailVerified) {
+          await _authRepository.logout();
+          emit(const AuthError('Please verify your email before signing in.'));
+          return;
+        }
         emit(AuthAuthenticated(user));
       } else {
         emit(const AuthUnauthenticated());
