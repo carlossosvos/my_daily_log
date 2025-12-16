@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.my_daily_log"
+    namespace = "com.cgcvdev.dailylog"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -21,13 +21,15 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.my_daily_log"
+        applicationId = "com.cgcvdev.dailylog"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["auth0Domain"] = "dev-ri4wykohz5dczbgr.us.auth0.com"
+        manifestPlaceholders["auth0Scheme"] = "com.cgcvdev.dailylog"
     }
 
     buildTypes {
