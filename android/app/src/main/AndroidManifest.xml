@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="my_daily_log"
+        android:label="FrogLog"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -24,13 +24,14 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="com.cgcvdev.dailylog"
-                    android:host="froglog" />
+                    android:host="dev-ri4wykohz5dczbgr.us.auth0.com"
+                    android:pathPrefix="/android/com.cgcvdev.dailylog/callback" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

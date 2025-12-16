@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.cgcvdev.dailylog"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -28,6 +28,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["auth0Domain"] = "dev-ri4wykohz5dczbgr.us.auth0.com"
+        manifestPlaceholders["auth0Scheme"] = "com.cgcvdev.dailylog"
     }
 
     buildTypes {

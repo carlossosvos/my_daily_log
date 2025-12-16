@@ -1,4 +1,5 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:my_daily_log/core/config/app_config.dart';
 import 'package:my_daily_log/domain/entities/user.dart';
 
@@ -21,7 +22,7 @@ class Auth0Service {
       // Just check if we can create the Auth0 instance
       return _auth0.toString().isNotEmpty;
     } catch (e) {
-      print('Auth0 setup error: $e');
+      debugPrint('Auth0 setup error: $e');
       return false;
     }
   }
@@ -46,7 +47,7 @@ class Auth0Service {
       await _auth0.webAuthentication().logout();
     } catch (e) {
       if (AppConfig.enableLogging) {
-        print('Auth0 logout error: $e');
+        debugPrint('Auth0 logout error: $e');
       }
       rethrow;
     }
