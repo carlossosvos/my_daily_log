@@ -46,7 +46,8 @@ class Auth0Service {
 
   Future<void> logout() async {
     try {
-      await _auth0.webAuthentication().logout();
+      // Just clear local credentials without web logout flow
+      await _auth0.credentialsManager.clearCredentials();
     } catch (e) {
       if (AppConfig.enableLogging) {
         debugPrint('Auth0 logout error: $e');
