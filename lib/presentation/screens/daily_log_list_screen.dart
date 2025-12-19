@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_daily_log/core/router/app_route.dart';
+import 'package:my_daily_log/presentation/bloc/auth/auth_bloc.dart';
+import 'package:my_daily_log/presentation/bloc/auth/auth_event.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_state.dart';
@@ -19,6 +21,15 @@ class DailyLogListScreen extends StatelessWidget {
         title: const Text('My Daily Log'),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              context.read<AuthBloc>().add(const AuthLogoutRequested());
+            },
+          ),
+        ],
       ),
       body: BlocBuilder<DailyLogBloc, DailyLogState>(
         builder: (context, state) {

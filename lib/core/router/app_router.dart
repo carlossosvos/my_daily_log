@@ -18,8 +18,18 @@ class AppRouter {
         final authState = context.read<AuthBloc>().state;
         final isLoginRoute = state.matchedLocation == AppRoutes.logIn.path;
 
+        // Don't redirect during loading states
+        if (authState is AuthLoading) {
+          return null;
+        }
+
         // If not authenticated and not on login screen, redirect to login
-        if (authState is! AuthAuthenticated && !isLoginRoute) {
+        if (authState is AuthUnauthenticated && !isLoginRoute) {
+          return AppRoutes.logIn.path;
+        }
+
+        // If has error and not on login screen, redirect to login
+        if (authState is AuthError && !isLoginRoute) {
           return AppRoutes.logIn.path;
         }
 
