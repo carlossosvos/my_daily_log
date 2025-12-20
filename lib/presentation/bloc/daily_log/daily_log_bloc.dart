@@ -44,19 +44,24 @@ class DailyLogBloc extends Bloc<DailyLogEvent, DailyLogState> {
     try {
       final user = await authRepository.getCurrentUser();
       if (user == null) {
+        print('AddDailyLog: User not authenticated');
         emit(const DailyLogError('User not authenticated'));
         return;
       }
 
+      print('AddDailyLog: Creating log for user ${user.id}');
       await repository.createLog(
         userId: user.id,
         title: event.log.title,
         content: event.log.content,
       );
 
+      print('AddDailyLog: Reloading logs');
       final logs = await repository.getAllLogsByUser(user.id);
+      print('AddDailyLog: Loaded ${logs.length} logs');
       emit(DailyLogLoaded(logs));
     } catch (e) {
+      print('AddDailyLog error: $e');
       emit(DailyLogError('Failed to add log: $e'));
     }
   }

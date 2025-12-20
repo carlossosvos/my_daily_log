@@ -34,6 +34,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             );
             return;
           }
+
+          // Sync remote data on app startup if already authenticated
+          try {
+            await _dailyLogRepository.syncRemoteData(user.id);
+          } catch (e) {
+            debugPrint('Warning: Failed to sync remote data: $e');
+          }
+
           emit(AuthAuthenticated(user));
         } else {
           emit(const AuthUnauthenticated());
@@ -60,6 +68,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(const AuthError('Please verify your email before signing in.'));
           return;
         }
+
+        // Sync remote data after successful login
+        try {
+          await _dailyLogRepository.syncRemoteData(user.id);
+        } catch (e) {
+          debugPrint('Warning: Failed to sync remote data: $e');
+        }
+
         emit(AuthAuthenticated(user));
       } else {
         emit(const AuthUnauthenticated());
