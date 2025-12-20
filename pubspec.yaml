@@ -25,6 +25,12 @@ dependencies:
   go_router: ^17.0.0
   get_it: ^9.2.0
   auth0_flutter: ^1.14.0
+  
+  # Local database
+  drift: ^2.20.3              # Core Drift package for type-safe SQL
+  drift_flutter: ^0.2.0       # Flutter-specific implementation (uses SQLite)
+  path_provider: ^2.1.4       # To get the app's local storage path
+  path: ^1.9.0                # Path manipulation utilities
 
 dev_dependencies:
   flutter_test:
@@ -34,8 +40,11 @@ dev_dependencies:
   
   # Additional linting and analysis tools
   import_sorter: ^4.6.0  # For organizing imports
-  dart_code_metrics: ^5.7.6  # For code metrics and additional rules
   change_app_package_name: ^1.5.0
+  
+  # Code generation for Drift
+  drift_dev: ^2.20.3          # Generates type-safe database code
+  build_runner: ^2.4.13       # Runs code generation
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

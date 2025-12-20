@@ -1,12 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_daily_log/core/auth/auth_repository.dart';
+import 'package:my_daily_log/domain/repositories/daily_log_repository.dart';
 import 'package:my_daily_log/presentation/bloc/auth/auth_event.dart';
 import 'package:my_daily_log/presentation/bloc/auth/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
+  final DailyLogRepository _dailyLogRepository;
 
-  AuthBloc(this._authRepository) : super(const AuthInitial()) {
+  AuthBloc(this._authRepository, this._dailyLogRepository)
+    : super(const AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
@@ -71,6 +75,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
+      final user = await _authRepository.getCurrentUser();
+
+      if (user != null) {
+        try {
+          await _dailyLogRepository.deleteAllLogsByUser(user.id);
+        } catch (e) {
+          debugPrint('Warning: Failed to clean up user data: $e');
+        }
+      }
+
       await _authRepository.logout();
       emit(const AuthUnauthenticated());
     } catch (e) {
