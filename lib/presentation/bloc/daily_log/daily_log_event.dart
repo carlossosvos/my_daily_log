@@ -38,3 +38,7 @@ class DeleteDailyLog extends DailyLogEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class ClearAllLogs extends DailyLogEvent {
+  const ClearAllLogs();
+}
