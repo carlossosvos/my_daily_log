@@ -111,7 +111,9 @@ class DailyLogListScreen extends StatelessWidget {
                     onRefresh: () async {
                       context.read<DailyLogBloc>().add(const LoadDailyLogs());
                       // Wait a bit for the bloc to process
-                      await Future.delayed(const Duration(milliseconds: 500));
+                      await Future<void>.delayed(
+                        const Duration(milliseconds: 500),
+                      );
                     },
                     child: ListView.builder(
                       itemCount: state.logs.length,

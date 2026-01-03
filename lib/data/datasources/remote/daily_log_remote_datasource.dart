@@ -52,7 +52,7 @@ class DailyLogRemoteDatasource {
     required DateTime updatedAt,
   }) async {
     try {
-      final response = await _client
+      await _client
           .from('daily_logs')
           .update({
             'title': title,
@@ -68,11 +68,7 @@ class DailyLogRemoteDatasource {
 
   Future<void> deleteLog(int id) async {
     try {
-      final response = await _client
-          .from('daily_logs')
-          .delete()
-          .eq('id', id)
-          .select();
+      await _client.from('daily_logs').delete().eq('id', id).select();
     } catch (e) {
       rethrow;
     }
