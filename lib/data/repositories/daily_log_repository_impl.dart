@@ -43,7 +43,6 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
 
     try {
       // Create in remote first to get the Supabase-generated ID
-      print('Creating log in Supabase for user: $userId');
       final remoteResponse = await _remoteDatasource.createLog(
         userId: userId,
         title: title,
@@ -53,7 +52,6 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
       );
 
       remoteId = remoteResponse['id'] as int;
-      print('Log created in Supabase with id: $remoteId');
 
       // Now create locally with the same ID
       final companion = DailyLogsCompanion(
@@ -66,9 +64,7 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
       );
 
       await _localDao.createLog(companion);
-      print('Log created locally with matching id: $remoteId');
     } catch (e) {
-      print('Remote creation failed, falling back to local-only: $e');
       // Fallback: create locally if remote fails
       final companion = DailyLogsCompanion(
         userId: Value(userId),
@@ -80,7 +76,6 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
 
       final localId = await _localDao.createLog(companion);
       remoteId = localId;
-      print('Log created locally only with id: $localId');
     }
 
     return entity.DailyLog(
@@ -109,31 +104,24 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
     await _localDao.updateLog(updatedLog);
 
     try {
-      print('Repository: Syncing update to remote for log ID: ${log.id}');
       await _remoteDatasource.updateLog(
         id: int.parse(log.id),
         title: log.title,
         content: log.content,
         updatedAt: now,
       );
-      print('Repository: Successfully synced update to remote');
     } catch (e) {
-      print('Repository: Failed to sync update to remote: $e');
       // Log error but don't fail - local-first approach
     }
   }
 
   @override
   Future<void> deleteLog(int id) async {
-    print('Repository: Deleting log locally with ID: $id');
     await _localDao.deleteLog(id);
 
     try {
-      print('Repository: Syncing delete to remote for log ID: $id');
       await _remoteDatasource.deleteLog(id);
-      print('Repository: Successfully synced delete to remote');
     } catch (e) {
-      print('Repository: Failed to sync delete to remote: $e');
       // Log error but don't fail - local-first approach
     }
   }

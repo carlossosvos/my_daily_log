@@ -36,7 +36,7 @@ void _initDailyLogs() {
     ),
   );
   sl.registerLazySingleton<DailyLogRemoteDatasource>(
-    () => DailyLogRemoteDatasource(sl<SupabaseClient>(), sl<AuthRepository>()),
+    () => DailyLogRemoteDatasource(sl<SupabaseClient>()),
   );
 }
 
