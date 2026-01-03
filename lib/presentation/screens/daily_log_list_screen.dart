@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_daily_log/core/router/app_route.dart';
 import 'package:my_daily_log/presentation/bloc/auth/auth_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/auth/auth_event.dart';
+import 'package:my_daily_log/presentation/bloc/auth/auth_state.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_state.dart';
@@ -31,77 +32,109 @@ class DailyLogListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<DailyLogBloc, DailyLogState>(
-        builder: (context, state) {
-          if (state is DailyLogLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state is DailyLogError) {
-            return Center(
+      body: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, authState) {
+          // Check authentication first
+          if (authState is! AuthAuthenticated) {
+            return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Error: ${state.message}',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      context.read<DailyLogBloc>().add(const LoadDailyLogs());
-                    },
-                    child: const Text('Retry'),
-                  ),
-                ],
+                children: [CircularProgressIndicator(), SizedBox(height: 16)],
               ),
             );
           }
 
-          if (state is DailyLogLoaded) {
-            if (state.logs.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.book_outlined,
-                      size: 64,
-                      color: Colors.grey[400],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No logs yet',
-                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Tap the + button to create your first log',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                    ),
-                  ],
-                ),
-              );
-            }
+          // User is authenticated, now show the logs
+          return BlocBuilder<DailyLogBloc, DailyLogState>(
+            builder: (context, state) {
+              if (state is DailyLogLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            return SlidableAutoCloseBehavior(
-              child: ListView.builder(
-                itemCount: state.logs.length,
-                itemBuilder: (context, index) {
-                  final log = state.logs[index];
-                  return DailyLogCard(
-                    log: log,
+              if (state is DailyLogError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Error: ${state.message}',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () {
+                          context.read<DailyLogBloc>().add(
+                            const LoadDailyLogs(),
+                          );
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                );
+              }
 
-                    onTap: () {
-                      context.push(AppRoutes.logDetailWithId(log.id));
-                    },
+              if (state is DailyLogLoaded) {
+                if (state.logs.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.book_outlined,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No logs yet',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Tap the + button to create your first log',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
                   );
-                },
-              ),
-            );
-          }
+                }
 
-          return const SizedBox.shrink();
+                return SlidableAutoCloseBehavior(
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<DailyLogBloc>().add(const LoadDailyLogs());
+                      // Wait a bit for the bloc to process
+                      await Future<void>.delayed(
+                        const Duration(milliseconds: 500),
+                      );
+                    },
+                    child: ListView.builder(
+                      itemCount: state.logs.length,
+                      itemBuilder: (context, index) {
+                        final log = state.logs[index];
+                        return DailyLogCard(
+                          log: log,
+
+                          onTap: () {
+                            context.push(AppRoutes.logDetailWithId(log.id));
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }
+
+              return const SizedBox.shrink();
+            },
+          );
         },
       ),
       floatingActionButton: Padding(

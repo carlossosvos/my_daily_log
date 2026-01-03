@@ -16,4 +16,5 @@ abstract class DailyLogRepository {
   Future<void> deleteAllLogsByUser(String userId);
   Future<List<DailyLog>> searchLogs(String userId, String searchTerm);
   Future<int> getLogCountByUser(String userId);
+  Future<void> syncRemoteData(String userId);
 }
