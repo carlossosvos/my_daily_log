@@ -48,6 +48,7 @@ class Auth0Service {
     try {
       // Just clear local credentials without web logout flow
       await _auth0.credentialsManager.clearCredentials();
+      await _auth0.webAuthentication(scheme: 'com.cgcvdev.dailylog').logout();
     } catch (e) {
       if (AppConfig.enableLogging) {
         debugPrint('Auth0 logout error: $e');

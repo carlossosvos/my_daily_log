@@ -33,6 +33,7 @@ void _initDailyLogs() {
     () => DailyLogRepositoryImpl(
       sl<AppDatabase>().dailyLogDao,
       sl<DailyLogRemoteDatasource>(),
+      sl<AppDatabase>().pendingLogSyncDao,
     ),
   );
   sl.registerLazySingleton<DailyLogRemoteDatasource>(

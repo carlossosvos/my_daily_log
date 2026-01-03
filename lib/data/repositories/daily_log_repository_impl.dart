@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:my_daily_log/data/datasources/local/app_database.dart';
 import 'package:my_daily_log/data/datasources/local/daos/daily_log_dao.dart';
+import 'package:my_daily_log/data/datasources/local/daos/pending_log_sync_dao.dart';
 import 'package:my_daily_log/data/datasources/remote/daily_log_remote_datasource.dart';
 import 'package:my_daily_log/data/models/daily_log_model.dart';
 import 'package:my_daily_log/domain/entities/daily_log.dart' as entity;
@@ -9,8 +10,13 @@ import 'package:my_daily_log/domain/repositories/daily_log_repository.dart';
 class DailyLogRepositoryImpl implements DailyLogRepository {
   final DailyLogDao _localDao;
   final DailyLogRemoteDatasource _remoteDatasource;
+  final PendingLogSyncDao _pendingDao;
 
-  DailyLogRepositoryImpl(this._localDao, this._remoteDatasource);
+  DailyLogRepositoryImpl(
+    this._localDao,
+    this._remoteDatasource,
+    this._pendingDao,
+  );
 
   @override
   Future<List<entity.DailyLog>> getAllLogsByUser(String userId) async {
@@ -38,48 +44,46 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
     required String content,
   }) async {
     final now = DateTime.now();
+    // Use a client-generated temp id (negative to avoid clashing with server increments)
+    final tempId = -DateTime.now().millisecondsSinceEpoch;
 
-    int? remoteId;
+    final companion = DailyLogsCompanion(
+      id: Value(tempId),
+      userId: Value(userId),
+      title: Value(title),
+      content: Value(content),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+
+    await _localDao.createLog(companion);
 
     try {
-      // Create in remote first to get the Supabase-generated ID
-      final remoteResponse = await _remoteDatasource.createLog(
+      await _remoteDatasource.createLog(
+        id: tempId,
         userId: userId,
         title: title,
         content: content,
         createdAt: now,
         updatedAt: now,
       );
-
-      remoteId = remoteResponse['id'] as int;
-
-      // Now create locally with the same ID
-      final companion = DailyLogsCompanion(
-        id: Value(remoteId),
-        userId: Value(userId),
-        title: Value(title),
-        content: Value(content),
-        createdAt: Value(now),
-        updatedAt: Value(now),
-      );
-
-      await _localDao.createLog(companion);
     } catch (e) {
-      // Fallback: create locally if remote fails
-      final companion = DailyLogsCompanion(
-        userId: Value(userId),
-        title: Value(title),
-        content: Value(content),
-        createdAt: Value(now),
-        updatedAt: Value(now),
+      // Enqueue pending create to sync later
+      await _pendingDao.insertOp(
+        PendingLogSyncOpsCompanion(
+          operation: const Value('create'),
+          logId: Value(tempId),
+          userId: Value(userId),
+          title: Value(title),
+          content: Value(content),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
       );
-
-      final localId = await _localDao.createLog(companion);
-      remoteId = localId;
     }
 
     return entity.DailyLog(
-      id: remoteId.toString(),
+      id: tempId.toString(),
       title: title,
       content: content,
       createdAt: now,
@@ -111,7 +115,17 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
         updatedAt: now,
       );
     } catch (e) {
-      // Log error but don't fail - local-first approach
+      await _pendingDao.insertOp(
+        PendingLogSyncOpsCompanion(
+          operation: const Value('update'),
+          logId: Value(int.parse(log.id)),
+          userId: Value(existingLog.userId),
+          title: Value(log.title),
+          content: Value(log.content),
+          updatedAt: Value(now),
+          lastAttempt: Value(DateTime.now()),
+        ),
+      );
     }
   }
 
@@ -122,7 +136,14 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
     try {
       await _remoteDatasource.deleteLog(id);
     } catch (e) {
-      // Log error but don't fail - local-first approach
+      await _pendingDao.insertOp(
+        PendingLogSyncOpsCompanion(
+          operation: const Value('delete'),
+          logId: Value(id),
+          userId: const Value(''),
+          lastAttempt: Value(DateTime.now()),
+        ),
+      );
     }
   }
 
@@ -133,7 +154,7 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
     try {
       await _remoteDatasource.deleteAllLogsByUser(userId);
     } catch (e) {
-      // Log error but don't fail - local-first approach
+      // No bulk enqueue for now
     }
   }
 
@@ -154,6 +175,41 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
   @override
   Future<void> syncRemoteData(String userId) async {
     try {
+      // First, flush pending operations
+      final pendingOps = await _pendingDao.getAllOps();
+      for (final op in pendingOps) {
+        try {
+          if (op.operation == 'create') {
+            await _remoteDatasource.createLog(
+              id: op.logId,
+              userId: op.userId,
+              title: op.title ?? '',
+              content: op.content ?? '',
+              createdAt: op.createdAt ?? DateTime.now(),
+              updatedAt: op.updatedAt ?? DateTime.now(),
+            );
+          } else if (op.operation == 'update') {
+            if (op.logId != null) {
+              await _remoteDatasource.updateLog(
+                id: op.logId!,
+                title: op.title ?? '',
+                content: op.content ?? '',
+                updatedAt: op.updatedAt ?? DateTime.now(),
+              );
+            }
+          } else if (op.operation == 'delete') {
+            if (op.logId != null) {
+              await _remoteDatasource.deleteLog(op.logId!);
+            }
+          }
+
+          await _pendingDao.deleteOp(op.id);
+        } catch (_) {
+          // Leave op in queue for next attempt
+          await _pendingDao.touchAttempt(op.id, DateTime.now());
+        }
+      }
+
       final remoteLogs = await _remoteDatasource.getAllLogsByUser(userId);
 
       for (final remoteLog in remoteLogs) {
