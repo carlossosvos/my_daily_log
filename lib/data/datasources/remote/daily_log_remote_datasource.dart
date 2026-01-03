@@ -20,6 +20,7 @@ class DailyLogRemoteDatasource {
   }
 
   Future<Map<String, dynamic>> createLog({
+    int? id,
     required String userId,
     required String title,
     required String content,
@@ -30,6 +31,7 @@ class DailyLogRemoteDatasource {
       final response = await _client
           .from('daily_logs')
           .insert({
+            if (id != null) 'id': id,
             'user_id': userId,
             'title': title,
             'content': content,
