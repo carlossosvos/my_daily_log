@@ -34,4 +34,3 @@ class DailyLog extends Equatable {
   @override
   List<Object?> get props => [id, title, content, createdAt, updatedAt];
 }
-
