@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_daily_log/core/utils/date_formatter.dart';
+import 'package:my_daily_log/core/utils/clipboard_utils.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_bloc.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_event.dart';
 import 'package:my_daily_log/presentation/bloc/daily_log/daily_log_state.dart';
 import 'package:my_daily_log/presentation/widgets/bottom_sheets/add_log_bottom_sheet.dart';
+import 'package:my_daily_log/presentation/widgets/molecules/log_date_info_card.dart';
 
 class DailyLogDetailScreen extends StatelessWidget {
   final String logId;
@@ -64,11 +65,68 @@ class DailyLogDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
+            tooltip: 'Edit',
             onPressed: () => _showEditBottomSheet(context),
           ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () => _showDeleteDialog(context),
+          PopupMenuButton<String>(
+            tooltip: 'More options',
+            onSelected: (value) {
+              final state = context.read<DailyLogBloc>().state;
+              if (state is! DailyLogLoaded) return;
+              final log = state.logs.firstWhere((log) => log.id == logId);
+
+              switch (value) {
+                case 'copy':
+                  ClipboardUtils.copyLog(
+                    context,
+                    title: log.title,
+                    content: log.content,
+                  );
+                  break;
+                case 'share':
+                  ClipboardUtils.shareLog(
+                    context,
+                    title: log.title,
+                    content: log.content,
+                  );
+                  break;
+                case 'delete':
+                  _showDeleteDialog(context);
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'copy',
+                child: Row(
+                  children: [
+                    Icon(Icons.copy, size: 20),
+                    SizedBox(width: 12),
+                    Text('Copy'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'share',
+                child: Row(
+                  children: [
+                    Icon(Icons.share, size: 20),
+                    SizedBox(width: 12),
+                    Text('Share'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete, color: Colors.red, size: 20),
+                    SizedBox(width: 12),
+                    Text('Delete', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -99,53 +157,41 @@ class DailyLogDetailScreen extends StatelessWidget {
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Date info
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.calendar_today, size: 16),
-                        const SizedBox(width: 8),
-                        Text(
-                          DateFormatter.formatRelativeDate(log.createdAt),
-                          style: const TextStyle(fontSize: 14),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      SelectableText(
+                        log.title,
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
                         ),
-                        if (log.createdAt != log.updatedAt) ...[
-                          const Spacer(),
-                          Text(
-                            'Updated ${DateFormatter.formatTimeOnly(log.updatedAt)}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Date info
+                      LogDateInfoCard(
+                        createdAt: log.createdAt,
+                        updatedAt: log.updatedAt,
+                      ),
+                      const SizedBox(height: 24),
+                      // Content
+                      SelectableText(
+                        log.content,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          height: 1.6,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                  // Title
-                  Text(
-                    log.title,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Content
-                  Text(
-                    log.content,
-                    style: const TextStyle(fontSize: 16, height: 1.5),
-                  ),
-                ],
+                ),
               ),
             );
           },

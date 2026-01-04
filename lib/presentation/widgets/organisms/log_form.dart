@@ -25,6 +25,8 @@ class LogForm extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
+          maxLength: 100,
+          showCharacterCount: true,
         ),
         const SizedBox(height: 16),
         AppTextField(
