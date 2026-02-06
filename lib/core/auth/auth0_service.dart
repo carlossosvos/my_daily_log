@@ -27,13 +27,24 @@ class Auth0Service {
     }
   }
 
-  Future<User?> login({Map<String, String>? parameters}) async {
+  Future<User?> login({
+    Map<String, String>? parameters,
+    bool forceLogin = false,
+  }) async {
     try {
+      final params = <String, String>{};
+      if (parameters != null) params.addAll(parameters);
+      if (forceLogin) params['prompt'] = 'login';
+
       final credentials = await _auth0
           .webAuthentication(scheme: 'com.cgcvdev.dailylog')
-          .login(parameters: parameters ?? const {});
+          .login(parameters: params);
       if (credentials.user.sub.isNotEmpty) {
-        return _mapToUser(credentials.user);
+        final user = _mapToUser(credentials.user);
+        if (AppConfig.enableLogging) {
+          debugPrint('Auth0 login success: id=${user.id} email=${user.email}');
+        }
+        return user;
       }
     } catch (e) {
       if (AppConfig.enableLogging) {
@@ -48,7 +59,7 @@ class Auth0Service {
     try {
       // Just clear local credentials without web logout flow
       await _auth0.credentialsManager.clearCredentials();
-      await _auth0.webAuthentication(scheme: 'com.cgcvdev.dailylog').logout();
+      //await _auth0.webAuthentication(scheme: 'com.cgcvdev.dailylog').logout();
     } catch (e) {
       if (AppConfig.enableLogging) {
         debugPrint('Auth0 logout error: $e');

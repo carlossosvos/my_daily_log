@@ -109,10 +109,10 @@ class DailyLogListScreen extends StatelessWidget {
                 return SlidableAutoCloseBehavior(
                   child: RefreshIndicator(
                     onRefresh: () async {
-                      context.read<DailyLogBloc>().add(const LoadDailyLogs());
+                      context.read<DailyLogBloc>().add(const SyncDailyLogs());
                       // Wait a bit for the bloc to process
                       await Future<void>.delayed(
-                        const Duration(milliseconds: 500),
+                        const Duration(milliseconds: 700),
                       );
                     },
                     child: ListView.builder(

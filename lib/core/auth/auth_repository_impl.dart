@@ -8,8 +8,8 @@ class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this._auth0Service);
 
   @override
-  Future<User?> login() async {
-    return await _auth0Service.login();
+  Future<User?> login({bool forceLogin = false}) async {
+    return await _auth0Service.login(forceLogin: forceLogin);
   }
 
   @override

@@ -42,3 +42,7 @@ class DeleteDailyLog extends DailyLogEvent {
 class ClearAllLogs extends DailyLogEvent {
   const ClearAllLogs();
 }
+
+class SyncDailyLogs extends DailyLogEvent {
+  const SyncDailyLogs();
+}

@@ -60,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      final user = await _authRepository.login();
+      final user = await _authRepository.login(forceLogin: true);
       if (user != null) {
         // Force logout if email not verified
         if (!user.isEmailVerified) {
@@ -95,9 +95,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (user != null) {
         try {
-          await _dailyLogRepository.deleteAllLogsByUser(user.id);
+          // Clear only local logs on logout to avoid deleting remote user data
+          await _dailyLogRepository.clearLocalLogsByUser(user.id);
         } catch (e) {
-          debugPrint('Warning: Failed to clean up user data: $e');
+          debugPrint('Warning: Failed to clear local user data: $e');
         }
       }
 
