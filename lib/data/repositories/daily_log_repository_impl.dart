@@ -159,6 +159,11 @@ class DailyLogRepositoryImpl implements DailyLogRepository {
   }
 
   @override
+  Future<void> clearLocalLogsByUser(String userId) async {
+    await _localDao.deleteAllLogsByUser(userId);
+  }
+
+  @override
   Future<List<entity.DailyLog>> searchLogs(
     String userId,
     String searchTerm,

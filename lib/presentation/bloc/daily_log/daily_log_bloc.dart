@@ -11,6 +11,7 @@ class DailyLogBloc extends Bloc<DailyLogEvent, DailyLogState> {
   DailyLogBloc({required this.repository, required this.authRepository})
     : super(const DailyLogInitial()) {
     on<LoadDailyLogs>(_onLoadDailyLogs);
+    on<SyncDailyLogs>(_onSyncDailyLogs);
     on<AddDailyLog>(_onAddDailyLog);
     on<UpdateDailyLog>(_onUpdateDailyLog);
     on<DeleteDailyLog>(_onDeleteDailyLog);
@@ -34,6 +35,29 @@ class DailyLogBloc extends Bloc<DailyLogEvent, DailyLogState> {
       emit(DailyLogLoaded(logs));
     } catch (e) {
       emit(DailyLogError('Failed to load logs: $e'));
+    }
+  }
+
+  Future<void> _onSyncDailyLogs(
+    SyncDailyLogs event,
+    Emitter<DailyLogState> emit,
+  ) async {
+    try {
+      emit(const DailyLogLoading());
+
+      final user = await authRepository.getCurrentUser();
+      if (user == null) {
+        emit(const DailyLogError('User not authenticated'));
+        return;
+      }
+
+      // Attempt to sync remote changes first
+      await repository.syncRemoteData(user.id);
+
+      final logs = await repository.getAllLogsByUser(user.id);
+      emit(DailyLogLoaded(logs));
+    } catch (e) {
+      emit(DailyLogError('Failed to sync logs: $e'));
     }
   }
 
