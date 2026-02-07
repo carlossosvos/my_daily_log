@@ -83,8 +83,15 @@ class DailyLogDetailScreen extends StatelessWidget {
                     content: log.content,
                   );
                   break;
-                case 'share':
-                  ClipboardUtils.shareLog(
+                case 'share_text':
+                  ClipboardUtils.shareLogText(
+                    context,
+                    title: log.title,
+                    content: log.content,
+                  );
+                  break;
+                case 'share_file':
+                  ClipboardUtils.shareLogAsFile(
                     context,
                     title: log.title,
                     content: log.content,
@@ -107,12 +114,22 @@ class DailyLogDetailScreen extends StatelessWidget {
                 ),
               ),
               const PopupMenuItem(
-                value: 'share',
+                value: 'share_text',
                 child: Row(
                   children: [
                     Icon(Icons.share, size: 20),
                     SizedBox(width: 12),
-                    Text('Share'),
+                    Text('Share as text'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'share_file',
+                child: Row(
+                  children: [
+                    Icon(Icons.insert_drive_file, size: 20),
+                    SizedBox(width: 12),
+                    Text('Share as file'),
                   ],
                 ),
               ),
